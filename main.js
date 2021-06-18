@@ -16,6 +16,7 @@ let game = null;
 let direction = "right";
 let time = 200;
 let snake = [];
+let food = [];
 level.innerHTML = 0;
 lengthSnake.innerHTML = 0;
 
@@ -33,6 +34,10 @@ function createSnake(){
         context.fillStyle = '#aa2222';
         context.fillRect(snake[i].x, snake[i].y, box, box);
     }
+}
+function createFood(){
+    context.fillStyle = "#336699"
+    context.fillRect(food[0].x, food[0].y, box, box)
 }
 
 function getDirection(event){
@@ -55,10 +60,15 @@ function startVars(){
     level.innerHTML = 0;
     lengthSnake.innerHTML = 0;
     snake = [];
+    food = [];
     snake[0] = {
         x: 2 * box,
         y: 2 * box
-    } 
+    }
+    food[0] = {
+        x: Math.floor(Math.random() * 15 + 1) * box,
+        y: Math.floor(Math.random() * 15 + 1) * box
+    }
 }
 
 function checkEndOfScreen(){
@@ -74,11 +84,10 @@ function start(){
         //verifica fim de tela
         checkEndOfScreen()
         
-        //redenriza o fundo
+        //redenriza elementos
         createBG();
-        
-        //renderiza a cobra
         createSnake();
+        createFood();
     
         //posição a cabeça da cobra.
         let snakeX = snake[0].x;
