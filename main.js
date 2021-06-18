@@ -16,9 +16,9 @@ let game = null;
 let direction = "right";
 let time = 200;
 let snake = [];
-let food = [];
-level.innerHTML = 0;
-lengthSnake.innerHTML = 0;
+let food = null;
+level.innerHTML = 1;
+lengthSnake.innerHTML = 1;
 
 //funções
 
@@ -35,9 +35,10 @@ function createSnake(){
         context.fillRect(snake[i].x, snake[i].y, box, box);
     }
 }
+
 function createFood(){
     context.fillStyle = "#336699"
-    context.fillRect(food[0].x, food[0].y, box, box)
+    context.fillRect(food.x, food.y, box, box)
 }
 
 function getDirection(event){
@@ -56,16 +57,14 @@ function startVars(){
     //inicializa variaveis
     game = null;
     direction = "right";
-    time = 200;
-    level.innerHTML = 0;
-    lengthSnake.innerHTML = 0;
+    lengthSnake.innerHTML = 1;
     snake = [];
     food = [];
     snake[0] = {
         x: 2 * box,
         y: 2 * box
     }
-    food[0] = {
+    food = {
         x: Math.floor(Math.random() * 15 + 1) * box,
         y: Math.floor(Math.random() * 15 + 1) * box
     }
@@ -78,6 +77,40 @@ function checkEndOfScreen(){
     if(snake[0].y < 0 * box && direction == "down") snake[0].y = 16 * box;
 }
 
+function checkDirection(snakeX, snakeY){    
+    //verifica direção 
+    if(direction == "right") snakeX += box;
+    if(direction == "left") snakeX -= box;
+    if(direction == "up") snakeY += box;
+    if(direction == "down") snakeY -= box;
+    return {x: snakeX, y: snakeY};
+}
+
+function checkFood(snakeX, snakeY){
+    if(snakeX == food.x && snakeY == food.y){
+        lengthSnake.innerHTML = Number(lengthSnake.innerHTML) + 1;
+        food = {
+            x: Math.floor(Math.random() * 15 + 1) * box,
+            y: Math.floor(Math.random() * 15 + 1) * box
+        }
+    }else{
+        snake.pop();
+    }
+}
+
+function newLevel(){
+    time -= 10;
+    level.innerHTML = Number(level.innerHTML)+1;
+    start();
+}
+
+function checkLevel(){
+    if(lengthSnake.innerHTML == 10){
+        console.log("New Level");
+        newLevel();
+    }
+}
+
 function start(){
     startVars();
     game = setInterval(()=>{
@@ -86,31 +119,23 @@ function start(){
         
         //redenriza elementos
         createBG();
-        createSnake();
         createFood();
+        createSnake();
     
         //posição a cabeça da cobra.
         let snakeX = snake[0].x;
         let snakeY = snake[0].y;
         
-        //verifica direção 
-        if(direction == "right") snakeX += box;
-        if(direction == "left") snakeX -= box;
-        if(direction == "up") snakeY += box;
-        if(direction == "down") snakeY -= box;
-        
+        //verifica se cobra vai comer comida
+        checkFood(snakeX, snakeY);
+
         // nova cabeça
-        let newHead = {
-            x: snakeX,
-            y: snakeY
-        }
-        
+        let newHead = checkDirection(snakeX, snakeY)
         //remove ultimo bloco da cobra
-        snake.pop();
         
         //adiciona newHead na primeira posição da cobra
         snake.unshift(newHead);
-
+        checkLevel();
     }, time);
 }
 
