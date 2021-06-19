@@ -104,7 +104,7 @@ function checkFood(){
 
 function newLevel(){
     //cria novo nivel
-    time -= 10;
+    time -= 15;
     level.innerHTML = Number(level.innerHTML)+1;
     start();
 }
@@ -129,6 +129,7 @@ function checkKnock(){
         if(snake[0].x == snake[i].x && snake[0].y == snake[i].y){
             alert("Game Over!");
             clearInterval(game);
+            level.innerHTML = 1;
             time = 200;
         }
     }
