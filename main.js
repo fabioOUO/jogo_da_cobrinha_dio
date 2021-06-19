@@ -37,6 +37,7 @@ function createSnake(){
 }
 
 function createFood(){
+    //criar comida
     context.fillStyle = "#336699"
     context.fillRect(food.x, food.y, box, box)
 }
@@ -51,7 +52,7 @@ function getDirection(event){
 }
 
 function startVars(){
-    //limpa contador de tempo
+    //limpa game
     game!=null?clearInterval(game):null;
     
     //inicializa variaveis
@@ -61,8 +62,8 @@ function startVars(){
     snake = [];
     food = [];
     snake[0] = {
-        x: 2 * box,
-        y: 2 * box
+        x: 1 * box,
+        y: 1 * box
     }
     food = {
         x: Math.floor(Math.random() * 15 + 1) * box,
@@ -71,6 +72,7 @@ function startVars(){
 }
 
 function checkEndOfScreen(){
+    //verifica se esta no fim da tela
     if(snake[0].x > 15 * box && direction == "right") snake[0].x = 0;
     if(snake[0].x < 0 * box && direction == "left") snake[0].x = 16 * box;
     if(snake[0].y > 15 * box && direction == "up") snake[0].y = 0;
@@ -86,8 +88,10 @@ function checkDirection(snakeX, snakeY){
     return {x: snakeX, y: snakeY};
 }
 
-function checkFood(snakeX, snakeY){
-    if(snakeX == food.x && snakeY == food.y){
+function checkFood(){
+    //verifica de cobra comeu comida
+    //se comeu cria outra
+    if(snake[0].x == food.x && snake[0].y == food.y){
         lengthSnake.innerHTML = Number(lengthSnake.innerHTML) + 1;
         food = {
             x: Math.floor(Math.random() * 15 + 1) * box,
@@ -99,15 +103,31 @@ function checkFood(snakeX, snakeY){
 }
 
 function newLevel(){
+    //cria novo nivel
     time -= 10;
     level.innerHTML = Number(level.innerHTML)+1;
     start();
 }
 
 function checkLevel(){
-    if(lengthSnake.innerHTML == 10){
-        console.log("New Level");
-        newLevel();
+    //verifica se terminou nivel
+    if(lengthSnake.innerHTML == 20){
+        if(level == 10){
+            alert("Você ganhou!");
+            clearInterval(game);
+        }else{
+            newLevel();
+        }
+    }
+}
+
+function checkKnock(){
+    //verifica se cobra bateu no corpo
+    for(i = 1; i < snake.length; i++){
+        if(snake[0].x == snake[i].x && snake[0].y == snake[i].y){
+            alert("Game Over!");
+            clearInterval(game);
+        }
     }
 }
 
@@ -115,26 +135,30 @@ function start(){
     startVars();
     game = setInterval(()=>{
         //verifica fim de tela
-        checkEndOfScreen()
-        
+        checkEndOfScreen();
+
+        //verifica se bateu no corpo
+        checkKnock();
+
         //redenriza elementos
         createBG();
         createFood();
         createSnake();
-    
+        
         //posição a cabeça da cobra.
         let snakeX = snake[0].x;
         let snakeY = snake[0].y;
         
         //verifica se cobra vai comer comida
         checkFood(snakeX, snakeY);
-
-        // nova cabeça
+        
+        // gera a nova posicao da cabeça da cobra
         let newHead = checkDirection(snakeX, snakeY)
-        //remove ultimo bloco da cobra
         
         //adiciona newHead na primeira posição da cobra
         snake.unshift(newHead);
+        
+        //checkKnock();
         checkLevel();
     }, time);
 }
