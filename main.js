@@ -38,8 +38,8 @@ function createSnake(){
 
 function createFood(){
     //criar comida
-    context.fillStyle = "#336699"
-    context.fillRect(food.x, food.y, box, box)
+    context.fillStyle = "#dddddd";
+    context.fillRect(food.x, food.y, box, box);
 }
 
 function getDirection(event){
@@ -112,10 +112,12 @@ function newLevel(){
 function checkLevel(){
     //verifica se terminou nivel
     if(lengthSnake.innerHTML == 20){
-        if(level == 10){
+        if(level.innerHTML == "10"){
             alert("Você ganhou!");
             clearInterval(game);
+            time = 200;
         }else{
+            alert("Passou para nível " + (Number(level.innerHTML) + 1)+".");
             newLevel();
         }
     }
@@ -127,6 +129,7 @@ function checkKnock(){
         if(snake[0].x == snake[i].x && snake[0].y == snake[i].y){
             alert("Game Over!");
             clearInterval(game);
+            time = 200;
         }
     }
 }
