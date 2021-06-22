@@ -22,13 +22,13 @@ lengthSnake.innerHTML = 1;
 
 //funções
 
-function createBG(){
+function createBG() {
     //cria fundo
     context.fillStyle = '#808090';
-    context.fillRect(0, 0, 16 * box, 16 * box);    
+    context.fillRect(0, 0, 16 * box, 16 * box);
 }
 
-function createSnake(){
+function createSnake() {
     //cria cobra
     for (let i = 0; i < snake.length; i++) {
         context.fillStyle = '#aa2222';
@@ -36,25 +36,33 @@ function createSnake(){
     }
 }
 
-function createFood(){
+function createFood() {
     //criar comida
     context.fillStyle = "#dddddd";
     context.fillRect(food.x, food.y, box, box);
 }
 
-function getDirection(event){
+function getDirection(event) {
     //define a direção aparti da tecla clicada
     let key = event.keyCode;
-    if(key == 37 && direction != "right") direction = "left";
-    if(key == 38 && direction != "up") direction = "down";
-    if(key == 39 && direction != "left") direction = "right";
-    if(key == 40 && direction != "down") direction = "up";
+    if (key == 37 && direction != "right") direction = "left";
+    if (key == 38 && direction != "up") direction = "down";
+    if (key == 39 && direction != "left") direction = "right";
+    if (key == 40 && direction != "down") direction = "up";
+
+    //para laterais
+
+    if (snake[0].x >= 16 * box && (direction == "up" || direction == "down")) direction = "right";
+    if (snake[0].x <= 0 && (direction == "up" || direction == "down")) direction = "left";
+    if (snake[0].y >= 16 * box && (direction == "right" || direction == "left")) direction = "up";
+    if (snake[0].y <= 0 && (direction == "right" || direction == "left")) direction = "down";
+
 }
 
-function startVars(){
+function startVars() {
     //limpa game
-    game!=null?clearInterval(game):null;
-    
+    game != null ? clearInterval(game) : null;
+
     //inicializa variaveis
     game = null;
     direction = "right";
@@ -71,62 +79,62 @@ function startVars(){
     }
 }
 
-function checkEndOfScreen(){
+function checkEndOfScreen() {
     //verifica se esta no fim da tela
-    if(snake[0].x > 15 * box && direction == "right") snake[0].x = 0;
-    if(snake[0].x < 0 * box && direction == "left") snake[0].x = 16 * box;
-    if(snake[0].y > 15 * box && direction == "up") snake[0].y = 0;
-    if(snake[0].y < 0 * box && direction == "down") snake[0].y = 16 * box;
+    if (snake[0].x > 15 * box && direction == "right") snake[0].x = 0;
+    if (snake[0].x < 0 * box && direction == "left") snake[0].x = 16 * box;
+    if (snake[0].y > 15 * box && direction == "up") snake[0].y = 0;
+    if (snake[0].y < 0 * box && direction == "down") snake[0].y = 16 * box;
 }
 
-function checkDirection(snakeX, snakeY){    
+function checkDirection(snakeX, snakeY) {
     //verifica direção 
-    if(direction == "right") snakeX += box;
-    if(direction == "left") snakeX -= box;
-    if(direction == "up") snakeY += box;
-    if(direction == "down") snakeY -= box;
-    return {x: snakeX, y: snakeY};
+    if (direction == "right") snakeX += box;
+    if (direction == "left") snakeX -= box;
+    if (direction == "up") snakeY += box;
+    if (direction == "down") snakeY -= box;
+    return { x: snakeX, y: snakeY };
 }
 
-function checkFood(){
+function checkFood() {
     //verifica de cobra comeu comida
     //se comeu cria outra
-    if(snake[0].x == food.x && snake[0].y == food.y){
+    if (snake[0].x == food.x && snake[0].y == food.y) {
         lengthSnake.innerHTML = Number(lengthSnake.innerHTML) + 1;
         food = {
             x: Math.floor(Math.random() * 15 + 1) * box,
             y: Math.floor(Math.random() * 15 + 1) * box
         }
-    }else{
+    } else {
         snake.pop();
     }
 }
 
-function newLevel(){
+function newLevel() {
     //cria novo nivel
     time -= 15;
-    level.innerHTML = Number(level.innerHTML)+1;
+    level.innerHTML = Number(level.innerHTML) + 1;
     start();
 }
 
-function checkLevel(){
+function checkLevel() {
     //verifica se terminou nivel
-    if(lengthSnake.innerHTML == 20){
-        if(level.innerHTML == "10"){
+    if (lengthSnake.innerHTML == 20) {
+        if (level.innerHTML == "10") {
             alert("Você ganhou!");
             clearInterval(game);
             time = 200;
-        }else{
-            alert("Passou para nível " + (Number(level.innerHTML) + 1)+".");
+        } else {
+            alert("Passou para nível " + (Number(level.innerHTML) + 1) + ".");
             newLevel();
         }
     }
 }
 
-function checkKnock(){
+function checkKnock() {
     //verifica se cobra bateu no corpo
-    for(i = 1; i < snake.length; i++){
-        if(snake[0].x == snake[i].x && snake[0].y == snake[i].y){
+    for (i = 1; i < snake.length; i++) {
+        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
             alert("Game Over!");
             clearInterval(game);
             level.innerHTML = 1;
@@ -135,9 +143,9 @@ function checkKnock(){
     }
 }
 
-function start(){
+function start() {
     startVars();
-    game = setInterval(()=>{
+    game = setInterval(() => {
         //verifica fim de tela
         checkEndOfScreen();
 
@@ -148,20 +156,20 @@ function start(){
         createBG();
         createFood();
         createSnake();
-        
+
         //posição a cabeça da cobra.
         let snakeX = snake[0].x;
         let snakeY = snake[0].y;
-        
+
         //verifica se cobra vai comer comida
         checkFood(snakeX, snakeY);
-        
+
         // gera a nova posicao da cabeça da cobra
         let newHead = checkDirection(snakeX, snakeY)
-        
+
         //adiciona newHead na primeira posição da cobra
         snake.unshift(newHead);
-        
+
         //checkKnock();
         checkLevel();
     }, time);
